@@ -5,6 +5,10 @@ export class Book {
 	price: number;
 	amount: number;
 
+	addStock(amount: number): void {
+		this.amount += amount;
+	}
+
 	sell(amount: number): number {
 		if (this.amount < amount) {
 			throw new Error("Stock not enough");

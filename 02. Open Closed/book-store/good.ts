@@ -1,5 +1,3 @@
-// Respresent as Model class
-// Handle only book information
 export class Book {
 	id: number;
 	name: string;
@@ -7,14 +5,16 @@ export class Book {
 	price: number;
 }
 
-// Respresent as Model class
-// Handle only stock amount
+export interface BookStorageManagement {
+	findStock(bookId: number): BookStorage | undefined;
+}
+
 export class BookStorage {
 	book: Book;
 	amount: number;
 }
 
-export class CacheBookStorageManagement {
+export class CacheBookStorageManagement implements BookStorageManagement {
 	storages: BookStorage[];
 
 	findStock(bookId: number): BookStorage | undefined {
@@ -22,8 +22,8 @@ export class CacheBookStorageManagement {
 	}
 }
 
-export class MockBookStorageManagement {
-	getMockStock(bookId: number): BookStorage | undefined {
+export class MockBookStorageManagement implements BookStorageManagement {
+	findStock(bookId: number): BookStorage | undefined {
 		const book = new Book();
 		book.id = bookId;
 		book.name = "mock";
@@ -39,17 +39,13 @@ export class MockBookStorageManagement {
 
 // Respresent as Logical class
 export class BookStore {
-	storageManagement: CacheBookStorageManagement | MockBookStorageManagement;
+	// Use interface BookStorageManagement to handle the object instead of concrete type
+	// When we need to modify or add new management type like db connection
+	// We dont need to add another if condition
+	storageManagement: BookStorageManagement;
 
 	private getStock(bookId: number): BookStorage | undefined {
-		// Bad here
-		if (this.storageManagement instanceof CacheBookStorageManagement) {
-			return this.storageManagement.findStock(bookId);
-		} else if (
-			this.storageManagement instanceof MockBookStorageManagement
-		) {
-			return this.storageManagement.getMockStock(bookId);
-		}
+		return this.storageManagement.findStock(bookId);
 	}
 
 	sell(id: number, amount: number): number {

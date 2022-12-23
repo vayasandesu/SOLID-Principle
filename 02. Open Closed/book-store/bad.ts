@@ -1,9 +1,3 @@
-export interface BookStorageManagement {
-	findStock(bookId: number): BookStorage | undefined;
-}
-
-// Respresent as Model class
-// Handle only book information
 export class Book {
 	id: number;
 	name: string;
@@ -11,14 +5,12 @@ export class Book {
 	price: number;
 }
 
-// Respresent as Model class
-// Handle only stock amount
 export class BookStorage {
 	book: Book;
 	amount: number;
 }
 
-export class CacheBookStorageManagement implements BookStorageManagement {
+export class CacheBookStorageManagement {
 	storages: BookStorage[];
 
 	findStock(bookId: number): BookStorage | undefined {
@@ -26,8 +18,8 @@ export class CacheBookStorageManagement implements BookStorageManagement {
 	}
 }
 
-export class MockBookStorageManagement implements BookStorageManagement {
-	findStock(bookId: number): BookStorage | undefined {
+export class MockBookStorageManagement {
+	getMockStock(bookId: number): BookStorage | undefined {
 		const book = new Book();
 		book.id = bookId;
 		book.name = "mock";
@@ -41,15 +33,24 @@ export class MockBookStorageManagement implements BookStorageManagement {
 	}
 }
 
-// Respresent as Logical class
+/**
+ * Storage management will violent the Open-closed principle
+ * When we want to add new DatabaseBookStorage
+ * We need to change this class to add new type of Storage Management
+ */
 export class BookStore {
-	// Use interface BookStorageManagement to handle the object instead of concrete type
-	// When we need to modify or add new management type like db connection
-	// We dont need to add another if condition
-	storageManagement: BookStorageManagement;
+	// Bad here
+	storageManagement: CacheBookStorageManagement | MockBookStorageManagement;
 
+	// Bad here
 	private getStock(bookId: number): BookStorage | undefined {
-		return this.storageManagement.findStock(bookId);
+		if (this.storageManagement instanceof CacheBookStorageManagement) {
+			return this.storageManagement.findStock(bookId);
+		} else if (
+			this.storageManagement instanceof MockBookStorageManagement
+		) {
+			return this.storageManagement.getMockStock(bookId);
+		}
 	}
 
 	sell(id: number, amount: number): number {

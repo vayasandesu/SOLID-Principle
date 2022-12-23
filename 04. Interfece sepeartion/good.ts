@@ -10,6 +10,10 @@ export interface Weapon {
 	fire(): void;
 }
 
+// ============================================
+// Implementation
+// ============================================
+
 export class Potion implements Edible {
 	eat(): void {
 		// Add health

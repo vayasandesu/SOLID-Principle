@@ -17,6 +17,21 @@ export class BookStorage {
 export class BookStorageManagement {
 	storages: BookStorage[];
 
+	addStock(book: Book, amount: number): void {
+		const addAmount = Math.max(0, amount);
+		const stock = this.findStock(book.id);
+
+		if (!stock) {
+			const storage: BookStorage = {
+				amount: addAmount,
+				book: book,
+			};
+			this.storages.push(storage);
+		} else {
+			stock.amount += addAmount;
+		}
+	}
+
 	findStock(bookId: number): BookStorage | undefined {
 		return this.storages.find((x) => x.book.id == bookId);
 	}

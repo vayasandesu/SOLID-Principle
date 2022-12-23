@@ -1,6 +1,10 @@
-# Rule of Thumb
+# Single Responsibility
 
-One class One Responsibility and One Reason to Change
+## Definition
 
-The easiest way to follow this rule is
-**Small scope to tell another people change this**
+> There should never be more than one reason for a class to change.
+> One class One Responsibility and One Reason to Change
+
+**The easiest way to follow this rule is**
+
+> Small scope to tell another people change this
